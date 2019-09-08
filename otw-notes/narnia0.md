@@ -55,7 +55,7 @@ int main(){
 }
 ```
 
-We can quickly see our buffer overflow in the code. The input character buffer `char buf[20];` has a length of 20 bytes, while the scanf() allows for 24 bytes `scanf("%24s",&buf);` of input leaving us 4 bytes to overflow. 
+We can quickly see our buffer overflow in the code. The input character buffer (`char buf[20];`) has a length of 20 bytes, while the scanf() allows for 24 bytes (`scanf("%24s",&buf);`) of input leaving us 4 bytes to overflow. 
 
 Looking at the code we can see that val has been assigned the hexadecimal value 0x41414141 `long val=0x41414141;`, which, when decoded to a string is `AAAA`. It looks like the program expects the user to enter 20 characters then 0xDEADBEEF.
 
