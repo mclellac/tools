@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+range="127.0.0.1"
+dir="${HOME}/.nmapdiff"
+d="{$dir}/scan_$(date +%Y-%m-%d).xml"
+y="${dir}/scan_$(date -d yesterday +Y-%m-%d).xml"
+
+if [ ! -d directory ]; then
+      mkdir "${dir}"
+fi
+
+if ! [ -x "$(command -v nmap)" ]; then
+    echo 'nmap is not installed.' >&2
+    exit 1
+fi
+
+nmap -T4 -oX "${d}" "${range}" > /dev/null 2>&1
+
+if [ -e "${y}" ]; then
+    diff "${y}" "${d}" > "${dir}"/diff.txt
+fi
+
+
