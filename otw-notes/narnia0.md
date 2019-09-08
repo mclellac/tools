@@ -86,7 +86,7 @@ Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 ```
 
-#### NOTE: You may be wondering why deadbeef is written backwards ("\xef\xbe\xad\xde"). In x86 and x86-64 (and a variety of other hardware), multi-byte values such as addresses are stored in little-endian order, ie. "backwards" from the viewpoint of a person reading it.
+###### NOTE: You may be wondering why deadbeef is written backwards ("\xef\xbe\xad\xde"). In x86 and x86-64 (and a variety of other hardware), multi-byte values such as addresses are stored in little-endian order, ie. "backwards" from the viewpoint of a person reading it.
 
 Now that we have privilege escilation lets get the password for narnia1 from /etc/narnia_pass/narnia1.
 
