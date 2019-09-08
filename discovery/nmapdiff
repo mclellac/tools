@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 range="127.0.0.1"
 dir="${HOME}/.nmapdiff"
-d="${dir}/scan_$(date +%Y-%m-%d).xml"
-y="${dir}/scan_$(date -d yesterday +Y-%m-%d).xml"
+d="${dir}/scan_$(date +%Y-%m-%d).txt"
+y="${dir}/scan_$(date -d yesterday +Y-%m-%d).txt"
 
 if [ ! -d "${dir}" ]; then
     mkdir -v "${dir}"
@@ -13,8 +13,7 @@ if ! [ -x "$(command -v nmap)" ]; then
     exit 1
 fi
 
-echo "nmap -T4  -oX ${d} ${range}"
-nmap -T4 -oX "${d}" "${range}" > /dev/null 2>&1
+nmap -A -T4 -sV -sT --top-ports 200 -Pn --script vuln -oN "${d}" "${range}" > /dev/null 2>&1
 
 if [ -e "${y}" ]; then
     diff "${y}" "${d}" > "${dir}"/diff.txt
