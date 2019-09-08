@@ -1,6 +1,7 @@
 ```bash
 ┏━•  ~
 ┗  ssh narnia0@narnia.labs.overthewire.org -p 2226
+```
 This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
 
 narnia0@narnia.labs.overthewire.org's password:
