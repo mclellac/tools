@@ -7,7 +7,7 @@ This is a OverTheWire game server. More information on http://www.overthewire.or
 narnia0@narnia.labs.overthewire.org's password:
 Linux narnia 4.18.12 x86_64 GNU/Linux
 ```
-... <SNIP BANNER> ...
+... SNIP BANNER ...
 
 ```bash
 narnia0@narnia:~$ cat /narnia/narnia0.c                                                                                                                               /*
