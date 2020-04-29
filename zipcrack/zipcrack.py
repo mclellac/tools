@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import zipfile
-import optparse
+import argparse
 import sys
 from threading import Thread
 
@@ -14,18 +14,20 @@ def extractFile(zfile, password):
 
 
 def main():
-    parser = optparse.OptionParser("usage%prog -f <zipfile> -d <dictionary>")
-    parser.add_option("-f", dest="zname", type="string", help="specify zip file")
-    parser.add_option("-d", dest="dname", type="string", help="specify dictionary file")
-    (options, args) = parser.parse_args()
+    parser = argparse.ArgumentParser(
+        usage="Example use: " + sys.argv[0] + " -f <zipfile> -d <dictionaryfile>"
+    )
+    parser.add_argument("--filename", "-f", help="specify zip file", nargs="?")
+    parser.add_argument("--dictionary", "-d", help="specify dictionary file", nargs="?")
+    args = parser.parse_args()
 
-    if (options.zname == None) | (options.dname == None):
+    if args.filename == None or args.dictionary == None:
         print(parser.usage)
         sys.exit(0)
     else:
-        zname = options.zname
+        zname = args.filename
+        dname = args.dictionary
 
-    dname = options.dname
     zfile = zipfile.ZipFile(zname)
     passfile = open(dname)
 
