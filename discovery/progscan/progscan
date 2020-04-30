@@ -6,6 +6,48 @@
 #  * Port Scan                                            #
 #  * Thorough Scan                                        #
 # ------------------------------------------------------- #
+GREY="$(tput bold ; tput setaf 0)"
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+YELLOW=$(tput setaf 11)
+BLUE=$(tput setaf 68)
+BROWN=$(tput setaf 130)
+ORANGE=$(tput setaf 172)
+RESET=$(tput sgr0)
+
+error_quit()    { msgwarn $err; exit 1; }
+msgwarn()       { message=${@:-"${WHITE}Error: No message passed"}; printf "${RED}${message}${WHITE}\n";   }
+
+msg_box() {
+    local term_width=80  # this should be dynamic with: term_width=`stty size | cut -d ' ' -f 2`
+    local str=("$@") msg_width
+
+    printf '\n'
+
+    for line in "${str[@]}"; do
+        ((msg_width<${#line})) && { msg_width="${#line}"; }
+
+        if [ $msg_width -gt $term_width ]; then
+            error_quit "error: msg_box() >> \$msg_width exceeds \$term_width. Split message into multiple lines or decrease the number of characters.\n"
+        fi
+
+        x=$(($term_width - $msg_width))
+        pad=$(($x / 2))
+    done
+
+    # draw box
+    printf '%s┌' "${ORANGE}" && printf '%.0s─' {0..79} && printf '┐\n' && printf '│%79s │\n'
+
+    for line in "${str[@]}"; do
+        rpad=$((80 - $pad - $msg_width)) # make sure to close with width 80
+        printf "│%$pad.${pad}s" && printf '%s%*s' "$YELLOW" "-$msg_width" "$line" "${ORANGE}" && printf "%$rpad.${rpad}s│\n"
+    done
+
+    printf '│%79s │\n' && printf  '└' && printf '%.0s─' {0..79}  && printf '┘\n%s' ${RESET}
+}
+
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 subnet" >&2
     exit 1
@@ -14,33 +56,21 @@ fi
 opts="-T4 --open"
 pingopts="-sn -PS21-23,25,53,80,443,3389 -PO -PE -PM -PP"
 
-echo "--------"
-echo "Finding active hosts"
-echo "--------"
-echo "nmap $opts $pingopts -oG alive.gnmap $1"
+msg_box "Finding active hosts:" " " "$ nmap $opts $pingopts \\" "-oG alive.gnmap $1"
 nmap $opts $pingopts -oG alive.gnmap $1
 
 grep "Status: Up" alive.gnmap | awk '{ print $2 }' > targets
 count=$(wc -l targets | awk '{ print $1 }')
-echo "[+] Found $count active hosts."
+echo "${ORANGE}[+]${RESET} Found $count active hosts."
 
-echo ""
-echo "--------"
-echo "Finding open ports"
-echo "--------"
-echo "nmap $opts -iL targets -p 1-65535 -oG ports.gnmap"
+msg_box "Finding open ports:" " " "$ nmap $opts -iL targets -p 1-65535 -oG ports.gnmap"
 nmap $opts -iL targets -p 1-65535 -oG ports.gnmap
 
 grep -o -E "[0-9]+/open" ports.gnmap | cut -d "/" -f1 | sort -u > ports
 count=$(wc -l ports | awk '{ print $1 }')
-echo "[+] Found $count unique open ports"
-
-echo ""
-echo "--------"
-echo "Running full nmap scan"
-echo "--------"
+echo "${ORANGE}[+]${RESET} Found $count unique open ports"
 
 portlist=$(tr '\n' , < ports)
-echo "nmap $opts -iL targets -p $portlist -A -oA full_scan"
+msg_box "Running full nmap scan:" " " "$ nmap $opts -iL targets -p $portlist -A -oA full_scan"
 nmap $opts -iL targets -p $portlist -A -oA full_scan
-echo "[+] Scan results available in full_scan.*"
+echo "${ORANGE}[+]${RESET} Scan results available in full_scan.*"
