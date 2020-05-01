@@ -56,14 +56,14 @@ fi
 opts="-T4 --open"
 pingopts="-sn -PS21-23,25,53,80,443,3389 -PO -PE -PM -PP"
 
-msg_box "Finding active hosts:" " " "$ nmap $opts $pingopts \\" "-oG alive.gnmap $1"
+msg_box "Looking for active hosts:" "" "$ nmap $opts $pingopts \\" "-oG alive.gnmap $1"
 nmap $opts $pingopts -oG alive.gnmap $1
 
 grep "Status: Up" alive.gnmap | awk '{ print $2 }' > targets
 count=$(wc -l targets | awk '{ print $1 }')
 echo "${ORANGE}[+]${RESET} Found $count active hosts."
 
-msg_box "Finding open ports:" " " "$ nmap $opts -iL targets -p 1-65535 -oG ports.gnmap"
+msg_box "Looking for open ports:" "" "$ nmap $opts -iL targets -p 1-65535 -oG ports.gnmap"
 nmap $opts -iL targets -p 1-65535 -oG ports.gnmap
 
 grep -o -E "[0-9]+/open" ports.gnmap | cut -d "/" -f1 | sort -u > ports
@@ -71,6 +71,6 @@ count=$(wc -l ports | awk '{ print $1 }')
 echo "${ORANGE}[+]${RESET} Found $count unique open ports"
 
 portlist=$(tr '\n' , < ports)
-msg_box "Running full nmap scan:" " " "$ nmap $opts -iL targets -p $portlist -A -oA full_scan"
+msg_box "Executing full nmap scan:" "" "$ nmap $opts -iL targets -p $portlist -A -oA full_scan"
 nmap $opts -iL targets -p $portlist -A -oA full_scan
 echo "${ORANGE}[+]${RESET} Scan results available in full_scan.*"
