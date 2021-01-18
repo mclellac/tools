@@ -1,0 +1,8 @@
+# Nmap 7.80 scan initiated Thu May  7 10:55:24 2020 as: nmap -T5 -Pn -p- -sT -oN /home/mclellac/Projects/src/github.com/mclellac/tools/portscan/tcp_192.168.51.129.nmap 192.168.51.129
+Nmap scan report for 192.168.51.129
+Host is up (0.000066s latency).
+Not shown: 65534 closed ports
+PORT    STATE SERVICE
+111/tcp open  rpcbind
+
+# Nmap done at Thu May  7 10:55:26 2020 -- 1 IP address (1 host up) scanned in 1.82 seconds

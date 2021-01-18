@@ -1,0 +1,29 @@
+# Nmap 7.80 scan initiated Thu May  7 10:55:26 2020 as: nmap --max-retries 2 -T3 -p 21,22,25,42,53,67,68,88,123,110,111,137,138,139,161,162,194,389,1512,5901,5900,6900 -sU -oN /home/mclellac/Projects/src/github.com/mclellac/tools/portscan/udp_192.168.51.129.nmap 192.168.51.129
+Nmap scan report for 192.168.51.129
+Host is up (0.000012s latency).
+
+PORT     STATE  SERVICE
+21/udp   closed ftp
+22/udp   closed ssh
+25/udp   closed smtp
+42/udp   closed nameserver
+53/udp   closed domain
+67/udp   closed dhcps
+68/udp   closed dhcpc
+88/udp   closed kerberos-sec
+110/udp  closed pop3
+111/udp  open   rpcbind
+123/udp  closed ntp
+137/udp  closed netbios-ns
+138/udp  closed netbios-dgm
+139/udp  closed netbios-ssn
+161/udp  closed snmp
+162/udp  closed snmptrap
+194/udp  closed irc
+389/udp  closed ldap
+1512/udp closed wins
+5900/udp closed rfb
+5901/udp closed unknown
+6900/udp closed unknown
+
+# Nmap done at Thu May  7 10:55:26 2020 -- 1 IP address (1 host up) scanned in 0.15 seconds

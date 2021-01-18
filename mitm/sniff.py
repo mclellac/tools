@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+
+import scapy.all as scapy
+
+def sniff(interface):
+    scapy.sniff(iface=interface, store=False, prn=process_sniffed_packet)
+
+def process_sniffed_packet():
+    print(packet)
+
+sniff("eth0")
