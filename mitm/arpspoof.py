@@ -1,18 +1,18 @@
 """
-A program that functions exactly the same as arpspoof command in Kali Linux. 
+A program that functions exactly the same as arpspoof command in Kali Linux.
 It takes target ip address and gateway ip address as command line arguments.
-ARP Spoofing: Tell router that I am victim device by sending victim device's 
+ARP Spoofing: Tell router that I am victim device by sending victim device's
 IP Address, and tell victim device that I am router by sending router's IP
 Address.
-To become man in the middle, Tell router that I am victim device by sending 
-victim device's MAC Address, and tell victim device that I am router by sending 
+To become man in the middle, Tell router that I am victim device by sending
+victim device's MAC Address, and tell victim device that I am router by sending
 router's MAC Address.
 Kali Linux tool: arpspoof
     e.g. arpspoof -i wlan0 -t [target ip address] [gateway]
-         arpspoof -i wlan0 -t [gateway] [target ip address] 
+         arpspoof -i wlan0 -t [gateway] [target ip address]
          Run these two commands simultanesouly
-         
-         # since this computer is not a router, we need to enable port 
+
+         # since this computer is not a router, we need to enable port
          forwarding so this computer is allowed to flow packets
          echo 1 > /proc/sys/net/ipv4/ip_forward
 ARP Spoofing is possible:
