@@ -1,4 +1,0 @@
-# Nmap 7.80 scan initiated Thu May  7 10:55:33 2020 as: nmap -T3 -Pn -O -p U:111,T:111 -sV --script=default -oA /home/mclellac/Projects/src/github.com/mclellac/tools/portscan/vuln_192.168.51.129 192.168.51.129
-Host: 192.168.51.129 ()	Status: Up
-Host: 192.168.51.129 ()	Ports: 111/open/tcp//rpcbind//2-4 (RPC #100000)/	OS: Linux 2.6.32	Seq Index: 251	IP ID Seq: All zeros
-# Nmap done at Thu May  7 10:55:41 2020 -- 1 IP address (1 host up) scanned in 7.96 seconds
