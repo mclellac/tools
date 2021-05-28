@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import re
 import random
 import urllib.request
@@ -30,7 +30,7 @@ while flag == 0:
             list1.append(s)
             list1.append(e)
 
-        if (i > 0):
+        if i > 0:
             print("Coding is not good")
 
         if len(list1) > 0:
