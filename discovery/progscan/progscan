@@ -6,15 +6,11 @@
 #  * Port Scan                                            #
 #  * Thorough Scan                                        #
 # ------------------------------------------------------- #
-GREY="$(tput bold ; tput setaf 0)"
 RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
 CYAN=$(tput setaf 6)
 WHITE=$(tput setaf 7)
-YELLOW=$(tput setaf 11)
-BLUE=$(tput setaf 68)
-BROWN=$(tput setaf 130)
-ORANGE=$(tput setaf 172)
+CYAN_LIGHT=$(tput setaf 14)
+ORANGE=$(tput bold ; tput setaf 172)
 RESET=$(tput sgr0)
 
 error_quit()    { msgwarn $err; exit 1; }
@@ -38,14 +34,14 @@ msg_box() {
     done
 
     # draw box
-    printf '%s┌' "${ORANGE}" && printf '%.0s─' {0..79} && printf '┐\n' && printf '│%79s │\n'
+    printf '%s┌' "${CYAN_LIGHT}" && printf '%.0s─' {0..79} && printf '┐\n' && printf '│%79s │\n'
 
     for line in "${str[@]}"; do
         rpad=$((80 - $pad - $msg_width)) # make sure to close with width 80
-        printf "│%$pad.${pad}s" && printf '%s%*s' "$YELLOW" "-$msg_width" "$line" "${ORANGE}" && printf "%$rpad.${rpad}s│\n"
+        printf "│%$pad.${pad}s" && printf '%s%*s' "${CYAN}" "-$msg_width" "$line" "${CYAN_LIGHT}" && printf "%$rpad.${rpad}s│\n"
     done
 
-    printf '│%79s │\n' && printf  '└' && printf '%.0s─' {0..79}  && printf '┘\n%s' ${RESET}
+    printf '│%79s │\n' && printf  '└' && printf '%.0s─' {0..79}  && printf '┘\n%s' #${RESET}
 }
 
 if [ "$#" -ne 1 ]; then
