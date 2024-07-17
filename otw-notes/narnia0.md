@@ -42,14 +42,14 @@ int main() {
 ```
 
 ## Key Points
-* Buffer Size: char buf[20]; allocates 20 bytes for buf.
-* Input Size: scanf("%24s", buf); reads up to 24 bytes into buf, allowing an overflow of 4 bytes.
-* Initial Value: val is initially set to 0x41414141, which corresponds to the string "AAAA".
-* Goal: Modify val to 0xdeadbeef to gain shell access.
+* Buffer Size: `char buf[20];` allocates 20 bytes for buf.
+* Input Size: `scanf("%24s", buf);` reads up to 24 bytes into buf, allowing an overflow of 4 bytes.
+* Initial Value: val is initially set to `0x41414141`, which corresponds to the string `"AAAA"`.
+* Goal: Modify val to `0xdeadbeef` to gain shell access.
 
 ## Explanation
 * Buffer Overflow: The mismatch between the buffer size (20 bytes) and the allowed input size (24 bytes) enables overwriting adjacent memory, specifically the val variable.
-* Endianness: On x86 and x86-64 architectures, multi-byte values are stored in little-endian order. Thus, to set val to 0xdeadbeef, the input needs to be provided in reverse order: \xef\xbe\xad\xde.
+* Endianness: On x86 and x86-64 architectures, multi-byte values are stored in little-endian order. Thus, to set val to `0xdeadbeef`, the input needs to be provided in reverse order: `\xef\xbe\xad\xde`.
 
 ## Demonstrating the Overflow
 Initial Test with 20 A's
@@ -111,5 +111,5 @@ efeidiedae       # password for narnia1
 
 ## Summary
 * Vulnerability: Buffer overflow due to scanf allowing more input than the buffer can hold.
-* Exploit: Overwrite val to 0xdeadbeef using crafted input.
+* Exploit: Overwrite val to `0xdeadbeef` using crafted input.
 * Result: Gain shell access and retrieve the password for the next level.
