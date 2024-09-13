@@ -20,15 +20,25 @@ console = Console()
 DEFAULT_PORTS = [80, 443, 21, 22, 25, 53, 110, 143, 3000, 3306, 8080, 8443, 5432]
 
 
-def format_dict(data: Union[Dict, List]) -> str:
+def format_dict(data: Union[Dict, List], indent_level: int = 0) -> str:
+    indent = '    ' * indent_level
     if not data:
         return "No data available."
+    
     if isinstance(data, list):
-        return ", ".join(str(item) for item in data)
-    return "\n".join(
-        (f"{key}: {value}" if not isinstance(value, dict) else f"{key}: {format_dict(value)}")
-        for key, value in data.items()
-    )
+        return "\n".join(f"{indent}- {item}" for item in data)
+    
+    if isinstance(data, dict):
+        formatted_output = []
+        for key, value in data.items():
+            if isinstance(value, (dict, list)):
+                formatted_output.append(f"{indent}{key}:")
+                formatted_output.append(format_dict(value, indent_level + 1))
+            else:
+                formatted_output.append(f"{indent}{key}: {value}")
+        return "\n".join(formatted_output)
+    
+    return str(data)
 
 
 def safe_resolve_dns(fqdn: str, record_type: str) -> Union[List[str], str]:
@@ -251,17 +261,17 @@ def detect_social_media_links(url: str) -> Union[List[str], Dict[str, str]]:
         return {"Error": str(e)}
 
 
-def enumerate_subdomains(fqdn: str) -> Union[str, Dict[str, str]]:
+def enumerate_subdomains(fqdn: str) -> str:
     try:
         response = requests.get(f"https://crt.sh/?q=%25.{fqdn}&output=json")
         if response.status_code == 200:
             crt_data = response.json()
-            subdomains = {entry["name_value"].lower() for entry in crt_data if not entry["name_value"].startswith("*")}
-            sorted_subdomains = sorted(subdomains)
-            return ", ".join(sorted_subdomains) if sorted_subdomains else "No subdomains found"
+            # Filter out wildcard domains, make unique, sort, and join by comma
+            subdomains = sorted({entry["name_value"].lower() for entry in crt_data if not entry["name_value"].startswith("*")})
+            return ", ".join(subdomains) if subdomains else "No subdomains found"
         return "No subdomains found"
     except requests.RequestException as e:
-        return {"Error": str(e)}
+        return f"Error fetching subdomains: {str(e)}"
 
 
 def check_ssl_pinning(url: str) -> str:
@@ -404,6 +414,7 @@ def print_info(
         "Open Ports": open_ports or "No open ports collected",
         "HTTP Security Headers": security_headers or "No HTTP security headers collected",
     }
+
     if output_json:
         console.print(json.dumps(output, indent=2))
     else:
@@ -413,6 +424,7 @@ def print_info(
                 console.print(format_dict(data))
             else:
                 console.print(data)
+            console.print("\n") 
 
 
 def main() -> None:
@@ -504,71 +516,71 @@ def main() -> None:
             args.json,
         )
 
-        console.print(f"\n\n[bold yellow]CDN Detection[/bold yellow]:\n {cdn_detection}")
-        console.print(f"\n\n[bold yellow]SSL Pinning[/bold yellow]:\n {ssl_pinning}")
-        console.print(f"\nc[bold yellow]WAF Detection[/bold yellow]:\n {waf_detection}")
-        console.print(f"\n\n[bold yellow]Website Speed Test[/bold yellow]:\n {format_dict(speed_test)}")
-        console.print(f"\n\n[bold yellow]Extracted JavaScript Files[/bold yellow]:\n {format_dict(js_files)}")
-        console.print(f"\n\n[bold yellow]Social Media Links[/bold yellow]:\n {format_dict(social_links)}")
+        console.print(f"\n[bold yellow]CDN Detection[/bold yellow]:\n {cdn_detection}")
+        console.print(f"\n[bold yellow]SSL Pinning[/bold yellow]:\n {ssl_pinning}")
+        console.print(f"\n[bold yellow]WAF Detection[/bold yellow]:\n {waf_detection}")
+        console.print(f"\n[bold yellow]Website Speed Test[/bold yellow]:\n {format_dict(speed_test)}")
+        console.print(f"\n[bold yellow]Extracted JavaScript Files[/bold yellow]:\n {format_dict(js_files)}")
+        console.print(f"\n[bold yellow]Social Media Links[/bold yellow]:\n {format_dict(social_links)}")
 
         if isinstance(subdomains, str):
-            console.print(f"\n\n[bold yellow]Subdomains[/bold yellow]:\n {subdomains}")
+            console.print(f"\n[bold yellow]Subdomains[/bold yellow]:\n {subdomains}")
         else:
-            console.print(f"\n\n[bold yellow]Subdomains[/bold yellow]:\n {', '.join(subdomains)}")
+            console.print(f"\n[bold yellow]Subdomains[/bold yellow]:\n {', '.join(subdomains)}")
 
-        console.print(f"\n\n[bold yellow]Traceroute[/bold yellow]:\n {traceroute_info}")
+        console.print(f"\n[bold yellow]Traceroute[/bold yellow]:\n {traceroute_info}")
 
     else:
         if args.dns_info:
             dns_records = get_dns_records(fqdn, domain)
             ip_addr = dns_records.get("IP Address") if dns_records else None
-            console.print(f"\n\n[bold yellow]DNS Records[/bold yellow]:\n{format_dict(dns_records)}")
+            console.print(f"\n[bold yellow]DNS Records[/bold yellow]:\n{format_dict(dns_records)}")
 
         if not args.port_scan:
             http_info = get_http_info(args.url, args.pragma)
 
         if args.ssl_info:
             ssl_info = get_ssl_certificate(fqdn)
-            console.print(f"\n\n[bold yellow]SSL Certificate Information[/bold yellow]:\n{format_dict(ssl_info)}")
+            console.print(f"\n[bold yellow]SSL Certificate Information[/bold yellow]:\n{format_dict(ssl_info)}")
 
         if args.whois_info:
             whois_info = get_whois_info(fqdn)
-            console.print(f"\n\n[bold yellow]WHOIS Information[/bold yellow]:\n{format_dict(whois_info)}")
+            console.print(f"\n[bold yellow]WHOIS Information[/bold yellow]:\n{format_dict(whois_info)}")
 
         if args.geo_info and ip_addr:
             ip_geolocation = get_ip_geolocation(ip_addr)
-            console.print(f"\n\n[bold yellow]IP Geolocation[/bold yellow]:\n{format_dict(ip_geolocation)}")
+            console.print(f"\n[bold yellow]IP Geolocation[/bold yellow]:\n{format_dict(ip_geolocation)}")
 
         if args.port_scan:
             open_ports = scan_ports(fqdn)
-            console.print(f"\n\n[bold yellow]Open Ports[/bold yellow]:\n{format_dict({'Ports': open_ports})}")
+            console.print(f"\n[bold yellow]Open Ports[/bold yellow]:\n{format_dict({'Ports': open_ports})}")
 
         if args.cdn_info and http_info:
             cdn = detect_cdn(fqdn)
-            console.print(f"\n\n[bold yellow]CDN Detection[/bold yellow]:\n{cdn}")
+            console.print(f"\n[bold yellow]CDN Detection[/bold yellow]:\n{cdn}")
 
         if args.ssl_pinning:
             ssl_pinning = check_ssl_pinning(args.url)
-            console.print(f"\n\n[bold yellow]SSL Pinning[/bold yellow]:\n{ssl_pinning}")
+            console.print(f"\n[bold yellow]SSL Pinning[/bold yellow]:\n{ssl_pinning}")
 
         if args.waf_info and http_info:
             waf_detection = detect_waf(http_info, fqdn)
-            console.print(f"\n\n[bold yellow]WAF Detection[/bold yellow]:\n{waf_detection}")
+            console.print(f"\n[bold yellow]WAF Detection[/bold yellow]:\n{waf_detection}")
 
         if args.speed_test:
             speed_test = website_speed_test(args.url)
-            console.print(f"\n\n[bold yellow]Website Speed Test[/bold yellow]:\n{format_dict(speed_test)}")
+            console.print(f"\n[bold yellow]Website Speed Test[/bold yellow]:\n{format_dict(speed_test)}")
 
         if args.js_files:
             js_files = extract_javascript_files(args.url)
             console.print(
-                f"\n\n[bold yellow]Extracted JavaScript Files[/bold yellow]:\n{format_dict({'JavaScript Files': js_files})}"
+                f"\n[bold yellow]Extracted JavaScript Files[/bold yellow]:\n{format_dict({'JavaScript Files': js_files})}"
             )
 
         if args.social_links:
             social_links = detect_social_media_links(args.url)
             console.print(
-                f"\n\n[bold yellow]Social Media Links[/bold yellow]:\n{format_dict({'Social Links': social_links})}"
+                f"\n[bold yellow]Social Media Links[/bold yellow]:\n{format_dict({'Social Links': social_links})}"
             )
 
         if args.subdomains:
@@ -576,11 +588,11 @@ def main() -> None:
             if isinstance(subdomains, str):
                 console.print(f"\n[bold yellow]Subdomains[/bold yellow]: {subdomains}")
             else:
-                console.print(f"\n\n[bold yellow]Subdomains[/bold yellow]:\n {', '.join(subdomains)}")
+                console.print(f"\n[bold yellow]Subdomains[/bold yellow]:\n {', '.join(subdomains)}")
 
         if args.traceroute:
             traceroute_info = traceroute(fqdn)
-            console.print(f"\n\n[bold yellow]Traceroute[/bold yellow]:\n{traceroute_info}")
+            console.print(f"\n[bold yellow]Traceroute[/bold yellow]:\n{traceroute_info}")
 
 
 if __name__ == "__main__":
