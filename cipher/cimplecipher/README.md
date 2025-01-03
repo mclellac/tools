@@ -1,7 +1,7 @@
 # Cimple Cipher a  Detection and Encryption Tool
 
 ## Overview
-This program is a simple  tool for encrypting, decrypting, detecting, and brute-forcing ciphers commonly used in text-based cryptography.
+This program is a simple  tool for encrypting, decrypting, detecting, and brute-forcing ciphers commonly used in text-based cryptography. These encryption methods are not widely used these days so it will likely never be a useful tool, but after watching season two of `Silo` I thought it would be a fun little project.
 
 ## Features
 - **Encryption and Decryption:** Supports Caesar, ROT13, Atbash, and Vigenère ciphers.
