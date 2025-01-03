@@ -67,9 +67,7 @@ make clean
 ```
 
 ### Without Makefile
-If you prefer to compile manually:
-
-Compile the program:
+If you prefer to compile manually. You can compile the program with the command:
 ```bash 
 gcc -o cimplecipher main.c ciphers.c utils.c -Wall -Wextra -O2
 ```
