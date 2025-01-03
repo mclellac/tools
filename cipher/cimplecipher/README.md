@@ -63,7 +63,7 @@ make install
 ```
 Clean up build files:
 ```bash
-    make clean
+make clean
 ```
 
 ### Without Makefile
@@ -91,10 +91,6 @@ A substitution cipher that replaces each letter with its reverse counterpart in 
 
 ### Vigenère Cipher
 A polyalphabetic substitution cipher that uses a keyword to determine the shift for each letter.
-
-## Error Handling
-- If the input file cannot be read or is empty, the program will display an error message.
-- If a required key for the Vigenère cipher is missing, the program will notify the user.
 
 ## Limitations
 - The brute force feature for the Vigenère cipher is limited to a maximum key length, which defaults to 10 but can be configured via the command-line option.
