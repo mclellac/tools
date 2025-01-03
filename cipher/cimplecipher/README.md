@@ -52,8 +52,8 @@ Run the program with the following options:
 ## Building the Program
 
 ### Using Makefile
-    Ensure you have make and a C compiler (e.g., GCC) installed.
-    Build the program with:
+Ensure you have make and a C compiler (e.g., GCC) installed.
+Build the program with:
 ```bash
 make
 ```
@@ -69,7 +69,7 @@ make clean
 ### Without Makefile
 If you prefer to compile manually:
 
-    Compile the program:
+Compile the program:
 ```bash 
 gcc -o cimplecipher main.c ciphers.c utils.c -Wall -Wextra -O2
 ```
